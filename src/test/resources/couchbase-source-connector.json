@@ -1,0 +1,18 @@
+{
+  "name": "%NAME%",
+  "config": {
+    "connector.class": "com.couchbase.connect.kafka.CouchbaseSourceConnector",
+    "name": "%NAME%",
+    "tasks.max": "1",
+    "topic.name": "%TOPIC_NAME%",
+    "connection.cluster_address": "%CLUSTER_ADDRESS%",
+    "connection.timeout.ms": "2000",
+    "connection.bucket": "%BUCKET%",
+    "connection.password": "%BUCKET_PASSWORD%",
+    "use_snapshots": "false",
+    "dcp.message.converter.class": "com.couchbase.connect.kafka.handler.source.DefaultSchemaSourceHandler",
+    "event.filter.class": "com.couchbase.connect.kafka.filter.AllPassFilter",
+    "couchbase.stream_from": "SAVED_OFFSET_OR_BEGINNING",
+    "couchbase.compression": "ENABLED"
+  }
+}
