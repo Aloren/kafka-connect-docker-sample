@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -19,14 +18,10 @@ import static org.awaitility.Awaitility.await;
 
 public class KafkaSteps {
 
-    private final KafkaConsumer<String, String> consumer;
+    public final KafkaConsumer<String, String> consumer;
 
     public KafkaSteps(String topic, String brokers) {
         this.consumer = createKafkaConsumer(topic, brokers);
-    }
-
-    public void createTopic() {
-
     }
 
     public List<String> consumeMessages(int messages) {
@@ -40,9 +35,9 @@ public class KafkaSteps {
         consumer.close();
     }
 
-    private List<ConsumerRecord<String, String>> pollUntilRecordsReceived(int maxMessages)  {
+    private List<ConsumerRecord<String, String>> pollUntilRecordsReceived(int maxMessages) {
         List<ConsumerRecord<String, String>> consumedValues = new ArrayList<>();
-        await().until (() ->{
+        await().until(() -> {
             consumedValues.addAll(pollForRecords(1));
             return consumedValues.size() >= maxMessages;
         });

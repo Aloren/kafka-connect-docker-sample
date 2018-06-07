@@ -7,7 +7,6 @@ import org.sample.container.CouchbaseContainerFactory;
 import java.io.IOException;
 
 import static io.restassured.RestAssured.given;
-import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.*;
 
 public class KafkaConnectSteps {
@@ -56,18 +55,16 @@ public class KafkaConnectSteps {
 
 
     public void connectorHasRunningState(String name) {
-//        await().untilAsserted(() ->
-                given()
-                        .port(kafkaConnectPublicPort)
-                        .contentType("application/json")
-                        .when()
-                        .get("/connectors/" + name + "/status")
-                        .then()
-                        .assertThat()
-                        .statusCode(200)
-                        ;
+        given()
+                .port(kafkaConnectPublicPort)
+                .contentType("application/json")
+                .when()
+                .get("/connectors/" + name + "/status")
+                .then()
+                .assertThat()
+                .statusCode(200)
 //                        .body("connector.state", equalTo("RUNNING"))
-//        );
+        ;
     }
 
     private String addConnectorRequest(CouchbaseSourceConnectorConfigurationProperties properties) {

@@ -1,6 +1,6 @@
 package org.sample.container;
 
-import com.playtika.test.kafka.properties.ZookeeperConfigurationProperties;
+import com.playtika.test.kafka.properties.KafkaConfigurationProperties;
 import org.sample.config.SchemaRegistryConfigurationProperties;
 import org.slf4j.Logger;
 import org.testcontainers.containers.FixedHostPortGenericContainer;
@@ -16,12 +16,13 @@ public class SchemaRegistryContainerFactory {
     public static final String SCHEMA_REGISTRY_HOST_NAME = "schema-registry";
 
     public static GenericContainer create(SchemaRegistryConfigurationProperties properties,
-                                          ZookeeperConfigurationProperties zookeeperProperties,
+                                          KafkaConfigurationProperties kafkaProperties,
                                           Logger logger, Network network) {
         return new FixedHostPortGenericContainer<>(properties.getDockerImage())
                 .withLogConsumer(containerLogsConsumer(logger))
-                .withEnv("SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL", ZookeeperContainerFactory.ZOOKEEPER_NOST_NAME + ":" + zookeeperProperties.getZookeeperPort())
+                .withEnv("SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS", "PLAINTEXT://" + KafkaContainerFactory.KAFKA_HOST_NAME + ":" + kafkaProperties.getBrokerPort())
                 .withEnv("SCHEMA_REGISTRY_HOST_NAME", SCHEMA_REGISTRY_HOST_NAME)
+//                TODO: add SCHEMA_REGISTRY_KAFKASTORE_TOPIC
                 .withExposedPorts(properties.getPort())
                 .withFixedExposedPort(properties.getPort(), properties.getPort())
                 .withNetwork(network)

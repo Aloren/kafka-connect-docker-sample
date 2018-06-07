@@ -26,11 +26,26 @@ public class CouchbaseSteps {
     }
 
     public void shutdownConnection() {
-        if (env != null)
-            env.shutdown();
-        if (cluster != null)
-            cluster.disconnect();
-        if (bucket != null)
-            bucket.close();
+        if (env != null) {
+            try {
+                env.shutdown();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (cluster != null) {
+            try {
+                cluster.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (bucket != null) {
+            try {
+                bucket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

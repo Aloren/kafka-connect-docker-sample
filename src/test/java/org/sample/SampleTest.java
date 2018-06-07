@@ -22,7 +22,6 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -84,7 +83,7 @@ public class SampleTest {
                 ));
 
         SchemaRegistryConfigurationProperties schemaRegistryProperties = new SchemaRegistryConfigurationProperties();
-        schemaRegistry = SchemaRegistryContainerFactory.create(schemaRegistryProperties, zookeeperProperties, logger, network);
+        schemaRegistry = SchemaRegistryContainerFactory.create(schemaRegistryProperties, kafkaProperties, logger, network);
         schemaRegistry.start();
 
 
@@ -93,7 +92,6 @@ public class SampleTest {
         kafkaConnect.start();
 
         kafkaConnectSteps.connectorsAreEmpty();
-
 
         kafkaConnectSteps.registerSourceConnector(couchbaseSourceConnectorProperties);
 
@@ -110,10 +108,9 @@ public class SampleTest {
 
         assertThat(bucket.get("first", StringDocument.class).content()).isEqualTo("nastya");
 
-        String brokers = "localhost:" + kafkaProperties.getBrokerPort();
-        kafkaSteps = new KafkaSteps(couchbaseSourceConnectorProperties.getTopicName(), brokers);
-
-        //TODO: not consuming messages yet... i should find out why
+        //TODO: use external kafka port
+//        String brokers = "localhost:" + kafkaProperties.getBrokerPort();
+//        kafkaSteps = new KafkaSteps(couchbaseSourceConnectorProperties.getTopicName(), brokers);
 //        List<String> strings = kafkaSteps.consumeMessages(1);
 
         System.out.println("nastya has finally setup kafka-connect!");
