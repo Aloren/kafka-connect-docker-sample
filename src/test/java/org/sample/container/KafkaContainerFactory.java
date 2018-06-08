@@ -39,6 +39,8 @@ public class KafkaContainerFactory {
                 .withCreateContainerCmdModifier(cmd -> cmd.withHostName(KAFKA_HOST_NAME))
                 .withEnv("KAFKA_ZOOKEEPER_CONNECT", ZOOKEEPER_NOST_NAME + ":" + zookeeperProperties.getZookeeperPort())
                 .withEnv("KAFKA_BROKER_ID", "-1")
+                //see: https://stackoverflow.com/questions/41868161/kafka-in-kubernetes-cluster-how-to-publish-consume-messages-from-outside-of-kub
+                //see: https://github.com/wurstmeister/kafka-docker/blob/master/README.md
                 .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "INTERNAL_PLAINTEXT:PLAINTEXT,EXTERNAL_PLAINTEXT:PLAINTEXT")
                 .withEnv("KAFKA_ADVERTISED_LISTENERS", "INTERNAL_PLAINTEXT://" + KAFKA_HOST_NAME + ":" + kafkaInternalPort + ",EXTERNAL_PLAINTEXT://localhost:" + kafkaExternalPort)
                 .withEnv("KAFKA_LISTENERS", "INTERNAL_PLAINTEXT://0.0.0.0:" + kafkaInternalPort + ",EXTERNAL_PLAINTEXT://0.0.0.0:" + kafkaExternalPort)
