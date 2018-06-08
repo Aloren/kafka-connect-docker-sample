@@ -10,11 +10,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.awaitility.Awaitility.await;
 
 public class KafkaSteps {
 
@@ -24,28 +22,12 @@ public class KafkaSteps {
         this.consumer = createKafkaConsumer(topic, brokers);
     }
 
-    public List<String> consumeMessages(int messages) {
-        return pollUntilRecordsReceived(messages)
-                .stream()
-                .map(ConsumerRecord::value)
-                .collect(Collectors.toList());
-    }
-
     public void close() {
         consumer.close();
     }
 
-    private List<ConsumerRecord<String, String>> pollUntilRecordsReceived(int maxMessages) {
-        List<ConsumerRecord<String, String>> consumedValues = new ArrayList<>();
-        await().until(() -> {
-            consumedValues.addAll(pollForRecords(1));
-            return consumedValues.size() >= maxMessages;
-        });
-        return consumedValues;
-    }
-
-    private List<ConsumerRecord<String, String>> pollForRecords(int timeout) {
-        ConsumerRecords<String, String> received = consumer.poll((timeout * 1000));
+    public List<ConsumerRecord<String, String>> pollForRecords(int timeoutMs) {
+        ConsumerRecords<String, String> received = consumer.poll(timeoutMs);
         if (received == null) {
             return emptyList();
         }
@@ -54,10 +36,10 @@ public class KafkaSteps {
         return list;
     }
 
-    private KafkaConsumer<String, String> createKafkaConsumer(String topic, String brokers) {
+    public KafkaConsumer<String, String> createKafkaConsumer(String topic, String brokers) {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, "test-group[" + topic + "]");
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, "test-group[" + topic + "]-" + System.currentTimeMillis());
         config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);

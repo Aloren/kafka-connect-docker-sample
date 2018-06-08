@@ -7,6 +7,7 @@ import com.playtika.test.couchbase.CouchbaseProperties;
 import com.playtika.test.kafka.KafkaTopicsConfigurer;
 import com.playtika.test.kafka.properties.KafkaConfigurationProperties;
 import com.playtika.test.kafka.properties.ZookeeperConfigurationProperties;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -102,16 +104,19 @@ public class SampleTest {
 
         kafkaConnectSteps.connectorHasRunningState(couchbaseSourceConnectorProperties.getName());
 
+        //TODO: use external kafka port
+        String brokers = "localhost:" + (kafkaProperties.getBrokerPort() + 1);
+        kafkaSteps = new KafkaSteps(couchbaseSourceConnectorProperties.getTopicName(), brokers);
+
         Bucket bucket = couchbaseSteps.createConnection(couchbaseProperties);
 
         bucket.insert(StringDocument.create("first", "nastya"));
 
         assertThat(bucket.get("first", StringDocument.class).content()).isEqualTo("nastya");
 
-        //TODO: use external kafka port
-//        String brokers = "localhost:" + kafkaProperties.getBrokerPort();
-//        kafkaSteps = new KafkaSteps(couchbaseSourceConnectorProperties.getTopicName(), brokers);
-//        List<String> strings = kafkaSteps.consumeMessages(1);
+        List<ConsumerRecord<String, String>> consumed = kafkaSteps.pollForRecords(30_000);
+
+        assertThat(consumed).hasSize(1);
 
         System.out.println("nastya has finally setup kafka-connect!");
     }
