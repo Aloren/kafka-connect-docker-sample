@@ -9,7 +9,6 @@ import com.playtika.test.kafka.properties.KafkaConfigurationProperties;
 import com.playtika.test.kafka.properties.ZookeeperConfigurationProperties;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.sample.config.KafkaConnectConfigurationProperties;
 import org.sample.config.SchemaRegistryConfigurationProperties;
@@ -27,8 +26,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Ignore
-public class SampleTest {
+public class CouchbaseKafkaConnectTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final KafkaConnectSteps kafkaConnectSteps = new KafkaConnectSteps();
